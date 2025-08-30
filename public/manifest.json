@@ -1,0 +1,26 @@
+{
+  "name": "PulseBloom Polls",
+  "short_name": "PulseBloom",
+  "description": "Where every voice matters - Create and participate in polls with PulseBloom",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0D1B2A",
+  "theme_color": "#FF6B6B",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["productivity", "social", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr"
+}
