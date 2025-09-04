@@ -1,6 +1,8 @@
-# PulseBloom Auth
+# PulseBloom Auth (Monorepo)
 
 A modern, stylish authentication starter for PulseBloom Polls built with Next.js (App Router), TypeScript, Supabase Auth, TailwindCSS, and shadcn/ui. Includes email/password, password reset, and Google OAuth with session-aware routing and a polished UI.
+
+This repository is now organized as a monorepo with separate `frontend/` (Next.js) and `backend/` (Express + TypeScript) workspaces managed by pnpm workspaces.
 
 ---
 
@@ -21,32 +23,50 @@ A modern, stylish authentication starter for PulseBloom Polls built with Next.js
 
 ```
 pulsebloom-auth/
-├─ app/
-│  ├─ auth/
-│  │  ├─ login/page.tsx             # Login UI (Google button wired)
-│  │  ├─ register/page.tsx          # Signup UI
-│  │  ├─ forgot-password/page.tsx   # Request reset email
-│  │  ├─ reset-password/page.tsx    # Set new password
-│  │  └─ callback/page.tsx          # OAuth/email callback handler
-│  ├─ dashboard/                    # Protected area
-│  └─ error.tsx                     # Global error boundary
-├─ components/
-│  ├─ auth/
-│  │  └─ auth-provider.tsx          # Supabase Auth context
-│  ├─ dashboard/
-│  └─ ui/                           # shadcn/ui components
-├─ hooks/
-│  ├─ use-mobile.ts
-│  └─ use-toast.ts
-├─ lib/
-│  ├─ supabase/
-│  │  ├─ client.ts                  # Browser client
-│  │  ├─ server.ts                  # Server client
-│  │  └─ middleware.ts              # Route protection + redirects
-│  ├─ types/
-│  └─ utils.ts
-├─ package.json
-├─ .env.local                       # Your local env vars
+├─ frontend/                         # Next.js 15 App Router (React 19)
+│  ├─ app/
+│  │  ├─ auth/
+│  │  │  ├─ login/page.tsx           # Login UI (Google button wired)
+│  │  │  ├─ register/page.tsx        # Signup UI
+│  │  │  ├─ forgot-password/page.tsx # Request reset email
+│  │  │  ├─ reset-password/page.tsx  # Set new password
+│  │  │  └─ callback/page.tsx        # OAuth/email callback handler
+│  │  ├─ dashboard/                  # Protected area
+│  │  └─ error.tsx                   # Global error boundary
+│  ├─ components/
+│  │  ├─ auth/
+│  │  │  └─ auth-provider.tsx        # Supabase Auth context
+│  │  ├─ dashboard/
+│  │  └─ ui/                         # shadcn/ui components
+│  ├─ hooks/
+│  │  ├─ use-mobile.ts
+│  │  └─ use-toast.ts
+│  ├─ lib/
+│  │  ├─ supabase/
+│  │  │  ├─ client.ts                # Browser client
+│  │  │  ├─ server.ts                # Server client
+│  │  │  └─ middleware.ts            # Route protection + redirects
+│  │  ├─ types/
+│  │  └─ utils.ts
+│  ├─ public/
+│  ├─ styles/
+│  ├─ components.json
+│  ├─ middleware.ts
+│  ├─ next-env.d.ts
+│  ├─ next.config.mjs
+│  ├─ postcss.config.mjs
+│  ├─ tsconfig.json
+│  ├─ package.json
+│  ├─ .env                           # Your local env vars
+│  └─ .env.local                     # Your local env vars (Next.js loads by default)
+├─ backend/                          # Express + TypeScript API
+│  ├─ src/
+│  │  └─ index.ts                    # Minimal server with /health
+│  ├─ tsconfig.json
+│  ├─ package.json
+│  └─ .env                           # Backend-only env vars (e.g., PORT)
+├─ pnpm-workspace.yaml               # Workspaces config
+├─ package.json                      # Root workspace manifest
 └─ README.md
 ```
 
@@ -60,14 +80,14 @@ Key files referenced above:
 
 ## Prerequisites
 
-- Node.js 18+ (recommended LTS) and pnpm
+- Node.js 18+ (recommended LTS) and pnpm (via Corepack)
 - A Supabase project (free tier works)
 - Google Cloud project for OAuth (optional but recommended)
 
-Install pnpm if you need it:
+pnpm is bundled via Corepack with Node.js. If Corepack is disabled or you prefer a specific pnpm version, you can activate one:
 
 ```bash
-npm i -g pnpm
+corepack prepare pnpm@9.12.2 --activate
 ```
 
 ---
@@ -77,12 +97,13 @@ npm i -g pnpm
 1) Clone and install
 
 ```bash
+# At repo root (monorepo install)
 pnpm install
 ```
 
 2) Environment variables
 
-Create `./.env.local` in the project root with:
+Create `./frontend/.env.local` with:
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
@@ -93,17 +114,21 @@ NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL=http://localhost:3000
 
 You can copy from `.env` if provided and then fill in real values.
 
-3) Run the dev server
+3) Run the dev servers
 
 ```bash
-pnpm dev
+# Frontend (Next.js)
+pnpm --filter frontend dev
+
+# Backend (Express API)
+pnpm --filter backend dev
 ```
 
-Visit http://localhost:3000
+Visit http://localhost:3000 for the frontend and http://localhost:4000/health for the backend health endpoint.
 
 ---
 
-## Supabase Configuration
+## Supabase Configuration (Frontend)
 
 1) Authentication → URL Configuration
 - __Site URL__: `http://localhost:3000`
@@ -140,14 +165,20 @@ Now clicking "Continue with Google" on `'/auth/login'` will go to Google → Sup
 
 ## Commands
 
-- `pnpm dev` — start local dev server
-- `pnpm build` — production build
-- `pnpm start` — start production server (after build)
-- `pnpm lint` — lint the codebase
+- Frontend:
+  - `pnpm --filter frontend dev` — start local dev server
+  - `pnpm --filter frontend build` — production build
+  - `pnpm --filter frontend start` — start production server (after build)
+  - `pnpm --filter frontend lint` — lint the codebase
+
+- Backend:
+  - `pnpm --filter backend dev` — start local dev API server (tsx watch)
+  - `pnpm --filter backend build` — TypeScript build to `backend/dist`
+  - `pnpm --filter backend start` — run compiled server
 
 ---
 
-## How It Works
+## How It Works (Auth)
 
 - __Client auth__: `auth-provider.tsx` initializes Supabase client (`lib/supabase/client.ts`), exposes auth methods and keeps session state.
 - __Middleware__: `lib/supabase/middleware.ts` checks session on navigation and applies redirects.
@@ -171,9 +202,13 @@ Now clicking "Continue with Google" on `'/auth/login'` will go to Google → Sup
 - __Consent screen errors__
   - If in Testing, add your account to Test users in Google Cloud
 
-- __Env not loading__
-  - Use `.env.local` (Next.js loads this by default)
+- __Env not loading (frontend)__
+  - Use `frontend/.env.local` (Next.js loads this by default)
   - Restart the dev server after changing env vars
+
+- __Corepack / pnpm errors__
+  - Try pinning pnpm: `corepack prepare pnpm@9.12.2 --activate`
+  - Ensure Node.js 18+ is installed
 
 - __Type or build issues__
   - Ensure Node 18+, `pnpm install`

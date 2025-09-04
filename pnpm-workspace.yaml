@@ -1,3 +1,6 @@
+packages:
+  - "frontend"
+  - "backend"
 ignoredBuiltDependencies:
-  - '@tailwindcss/oxide'
-  - sharp
+  - "@tailwindcss/oxide"
+  - "sharp"
