@@ -1,123 +1,164 @@
-# PulseBloom Auth (Monorepo)
+<div align="center">
+  <h1>PulseBloom Polls</h1>
+  <p>✨ A modern, full-stack polling application with real-time results and secure authentication ✨</p>
+  
+  [![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+  [![Supabase](https://img.shields.io/badge/Supabase-181818?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+  [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+  [![shadcn/ui](https://img.shields.io/badge/shadcn_ui-18181B?style=for-the-badge&logo=react&logoColor=white)](https://ui.shadcn.com/)
 
-A modern, stylish authentication starter for PulseBloom Polls built with Next.js (App Router), TypeScript, Supabase Auth, TailwindCSS, and shadcn/ui. Includes email/password, password reset, and Google OAuth with session-aware routing and a polished UI.
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](https://github.com/yourusername/pulsebloom-polls/pulls)
+</div>
 
-This repository is now organized as a monorepo with separate `frontend/` (Next.js) and `backend/` (Express + TypeScript) workspaces managed by pnpm workspaces.
+## 🚀 Features
 
----
+### 🔐 Authentication
+- **Email/Password** - Secure sign up and login
+- **Google OAuth** - One-click sign in with Google
+- **Password Reset** - Secure password recovery flow
+- **Session Management** - Protected routes and automatic session handling
 
-## Features
+### 📊 Polling System
+- Create and manage polls
+- Real-time voting and results
+- Secure voting with user authentication
+- Responsive design for all devices
 
-- 
-- __Email/password auth__: register, login, logout
-- __Google OAuth__: one-click login via Supabase
-- __Password reset__: request email link and set new password
-- __Session management__: client + middleware to protect routes
-- __Profile fetching__: example `profiles` table pattern
-- __Responsive UI__: shadcn/ui, Tailwind, custom PulseBloom theme
-- __App Router ready__: Next.js 15, React 19
+### 🛠️ Tech Stack
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS, shadcn/ui
+- **Backend**: Node.js, Express, TypeScript
+- **Database & Auth**: Supabase
+- **Package Manager**: pnpm
 
----
-
-## Project Structure
+## 🏗️ Project Structure
 
 ```
 pulsebloom-auth/
-├─ frontend/                         # Next.js 15 App Router (React 19)
-│  ├─ app/
-│  │  ├─ auth/
-│  │  │  ├─ login/page.tsx           # Login UI (Google button wired)
-│  │  │  ├─ register/page.tsx        # Signup UI
-│  │  │  ├─ forgot-password/page.tsx # Request reset email
-│  │  │  ├─ reset-password/page.tsx  # Set new password
-│  │  │  └─ callback/page.tsx        # OAuth/email callback handler
-│  │  ├─ dashboard/                  # Protected area
-│  │  └─ error.tsx                   # Global error boundary
-│  ├─ components/
-│  │  ├─ auth/
-│  │  │  └─ auth-provider.tsx        # Supabase Auth context
-│  │  ├─ dashboard/
-│  │  └─ ui/                         # shadcn/ui components
-│  ├─ hooks/
-│  │  ├─ use-mobile.ts
-│  │  └─ use-toast.ts
-│  ├─ lib/
-│  │  ├─ supabase/
-│  │  │  ├─ client.ts                # Browser client
-│  │  │  ├─ server.ts                # Server client
-│  │  │  └─ middleware.ts            # Route protection + redirects
-│  │  ├─ types/
-│  │  └─ utils.ts
-│  ├─ public/
-│  ├─ styles/
-│  ├─ components.json
-│  ├─ middleware.ts
-│  ├─ next-env.d.ts
-│  ├─ next.config.mjs
-│  ├─ postcss.config.mjs
-│  ├─ tsconfig.json
-│  ├─ package.json
-│  ├─ .env                           # Your local env vars
-│  └─ .env.local                     # Your local env vars (Next.js loads by default)
-├─ backend/                          # Express + TypeScript API
-│  ├─ src/
-│  │  └─ index.ts                    # Minimal server with /health
-│  ├─ tsconfig.json
-│  ├─ package.json
-│  └─ .env                           # Backend-only env vars (e.g., PORT)
-├─ pnpm-workspace.yaml               # Workspaces config
-├─ package.json                      # Root workspace manifest
-└─ README.md
+├── frontend/                # Next.js 15 frontend
+│   ├── app/                 # App router pages
+│   │   ├── auth/            # Authentication pages
+│   │   └── dashboard/       # Protected routes
+│   ├── components/          # Reusable UI components
+│   ├── lib/                 # Shared utilities and API clients
+│   └── styles/              # Global styles and themes
+├── backend/                 # Express backend
+│   ├── src/
+│   │   ├── index.ts         # Main server file
+│   │   └── voteHandler.ts   # Vote handling logic
+│   └── tsconfig.json
+└── scripts/                 # Database scripts
 ```
 
-Key files referenced above:
-- `components/auth/auth-provider.tsx`: exposes `signIn`, `signUp`, `signOut`, `resetPassword` and listens to Supabase auth state.
-- `app/auth/login/page.tsx`: email/password login + "Continue with Google" wired via `supabase.auth.signInWithOAuth({ provider: 'google' })` to `redirectTo: /auth/callback`.
-- `lib/supabase/middleware.ts`: protects `'/dashboard'`, redirects logged-in users away from `'/auth/login'`, `'/auth/register'`, `'/auth/forgot-password'`.
-- `app/auth/callback/page.tsx`: validates the session and forwards to `'/dashboard'` or back to login on error.
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+ (LTS recommended)
+- pnpm (included with Node.js 16.17+ via Corepack)
+- Supabase account (free tier available)
+- Google Cloud project (for OAuth, optional)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/pulsebloom-polls.git
+   cd pulsebloom-polls
+   ```
+
+2. **Install dependencies**
+   ```bash
+   # Install root dependencies
+   pnpm install
+   
+   # Install frontend dependencies
+   cd frontend
+   pnpm install
+   
+   # Install backend dependencies
+   cd ../backend
+   pnpm install
+   ```
+
+3. **Environment Setup**
+   Create `.env` files in both `frontend` and `backend` directories:
+   
+   **Frontend (`.env.local`):**
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   NEXT_PUBLIC_API_URL=http://localhost:4000
+   ```
+   
+   **Backend (`.env`):**
+   ```env
+   PORT=4000
+   SUPABASE_URL=your_supabase_url
+   SUPABASE_ANON_KEY=your_supabase_anon_key
+   NODE_ENV=development
+   ```
+
+4. **Start Development Servers**
+   ```bash
+   # In the root directory
+   pnpm dev
+   ```
+   This will start both the frontend (port 3000) and backend (port 4000) in development mode.
+
+## 🎯 API Endpoints
+
+### Polls
+- `GET /api/polls/:id/results` - Get poll results
+- `POST /api/polls/:id/vote` - Cast a vote (requires authentication)
+
+### Authentication
+- `POST /api/auth/signup` - Create a new account
+- `POST /api/auth/signin` - Sign in with email/password
+- `POST /api/auth/signout` - Sign out
+- `POST /api/auth/reset-password` - Request password reset
+
+## 🧪 Testing
+
+Run the test suite:
+```bash
+# Run frontend tests
+cd frontend
+pnpm test
+
+# Run backend tests
+cd ../backend
+pnpm test
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) to get started.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org/) - The React Framework for Production
+- [Supabase](https://supabase.com/) - Open Source Firebase Alternative
+- [shadcn/ui](https://ui.shadcn.com/) - Beautifully designed components
+- [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework
 
 ---
 
-## Prerequisites
-
-- Node.js 18+ (recommended LTS) and pnpm (via Corepack)
-- A Supabase project (free tier works)
-- Google Cloud project for OAuth (optional but recommended)
-
-pnpm is bundled via Corepack with Node.js. If Corepack is disabled or you prefer a specific pnpm version, you can activate one:
-
-```bash
-corepack prepare pnpm@9.12.2 --activate
-```
-
----
-
-## Setup
-
-1) Clone and install
-
-```bash
-# At repo root (monorepo install)
-pnpm install
-```
-
-2) Environment variables
-
-Create `./frontend/.env.local` with:
-
-```
-NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
-# Optional: helps build redirect URLs for email flows during local dev
-NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL=http://localhost:3000
-```
-
-You can copy from `.env` if provided and then fill in real values.
-
-3) Run the dev servers
-
-```bash
-# Frontend (Next.js)
+<div align="center">
+  Made with ❤️ by the PulseBloom Team
+</div>
 pnpm --filter frontend dev
 
 # Backend (Express API)
